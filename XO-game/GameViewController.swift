@@ -17,6 +17,7 @@ class GameViewController: UIViewController {
         }
     }
     private lazy var referee = Referee(gameboard: self.gameboard)
+    private var turn = 0
 
     @IBOutlet var gameboardView: GameboardView!
     @IBOutlet var firstPlayerTurnLabel: UILabel!
@@ -50,10 +51,17 @@ class GameViewController: UIViewController {
     }
 
     private func goToNextState() {
+        turn += 1
+        if turn >= GameboardSize.count {
+            self.currentState = GameEndedState(winner: nil, gameViewController: self)
+            return
+        }
+        
         if let winner = self.referee.determineWinner() {
             self.currentState = GameEndedState(winner: winner, gameViewController: self)
             return
         }
+        
         if let playerInputState = currentState as? PlayerInputState {
             self.currentState = PlayerInputState(player: playerInputState.player.next,
                                                  gameViewController: self,

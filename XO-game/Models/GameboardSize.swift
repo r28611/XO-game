@@ -13,5 +13,7 @@ public struct GameboardSize {
     public static let columns = 3
     public static let rows = 3
     
+    public static var count: Int { columns * rows }
+    
     private init() { }
 }
