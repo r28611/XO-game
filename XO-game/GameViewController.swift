@@ -10,6 +10,14 @@ import UIKit
 
 class GameViewController: UIViewController {
 
+    private let gameboard = Gameboard()
+    private var currentState: GameState! {
+        didSet {
+            self.currentState.begin()
+        }
+    }
+    private lazy var referee = Referee(gameboard: self.gameboard)
+
     @IBOutlet var gameboardView: GameboardView!
     @IBOutlet var firstPlayerTurnLabel: UILabel!
     @IBOutlet var secondPlayerTurnLabel: UILabel!
@@ -18,13 +26,40 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.goToFirstState()
+        
         gameboardView.onSelectPosition = { [weak self] position in
             guard let self = self else { return }
-            self.gameboardView.placeMarkView(XView(), at: position)
+            self.currentState.addMark(at: position)
+            if self.currentState.isCompleted {
+                self.goToNextState()
+            }
         }
     }
     
     @IBAction func restartButtonTapped(_ sender: UIButton) {
+        
+    }
+    
+    private func goToFirstState() {
+        self.currentState = PlayerInputState(player: .first,
+                                             gameViewController: self,
+                                             gameboard: gameboard,
+                                             gameboardView: gameboardView)
+    }
+
+    private func goToNextState() {
+        if let winner = self.referee.determineWinner() {
+            self.currentState = GameEndedState(winner: winner, gameViewController: self)
+            return
+        }
+        if let playerInputState = currentState as? PlayerInputState {
+            self.currentState = PlayerInputState(player: playerInputState.player.next,
+                                                 gameViewController: self,
+                                                 gameboard: gameboard,
+                                                 gameboardView: gameboardView)
+        }
         
     }
 }
