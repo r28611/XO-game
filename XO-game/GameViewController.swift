@@ -41,6 +41,10 @@ class GameViewController: UIViewController {
     
     @IBAction func restartButtonTapped(_ sender: UIButton) {
         Log(.restartGame)
+        gameboardView.clear()
+        gameboard.clear()
+        goToFirstState()
+        turn = 0
     }
     
     private func goToFirstState() {
