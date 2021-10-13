@@ -42,7 +42,7 @@ public class PlayerInputState: GameState {
         guard let gameboardView = self.gameboardView
             , gameboardView.canPlaceMarkView(at: position)
             else { return }
-
+        Log(.playerInput(player: self.player, position: position))
         self.gameboard?.setPlayer(self.player, at: position)
         self.gameboardView?.placeMarkView(self.markViewPrototype.copy(), at: position)
         self.isCompleted = true
