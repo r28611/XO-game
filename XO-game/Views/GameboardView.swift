@@ -17,6 +17,7 @@ public class GameboardView: UIView {
     
     public private(set) var markViewForPosition: [GameboardPosition: MarkView] = [:]
     
+    let markInvoker: MarkInvoker = MarkInvoker()
     // MARK: - Constants
     
     internal struct Constants {

@@ -18,7 +18,7 @@ class GameViewController: UIViewController {
     }
     private lazy var referee = Referee(gameboard: self.gameboard)
     private var turn = 0
-
+    
     @IBOutlet weak var modeControl: UISegmentedControl!
     @IBOutlet var gameboardView: GameboardView!
     @IBOutlet var firstPlayerTurnLabel: UILabel!
@@ -54,6 +54,7 @@ class GameViewController: UIViewController {
         gameboard.clear()
         goToFirstState()
         turn = 0
+        gameboardView.markInvoker
     }
     
     private func goToFirstState() {
@@ -61,7 +62,6 @@ class GameViewController: UIViewController {
         switch modeControl.selectedSegmentIndex {
         case 0:
             currentState = PlayerInputState(player: player,
-                                                 markViewPrototype: player.markViewPrototype,
                                                  gameViewController: self,
                                                  gameboard: gameboard,
                                                  gameboardView: gameboardView)
@@ -90,7 +90,6 @@ class GameViewController: UIViewController {
         if let playerInputState = currentState as? PlayerInputState {
             let player = playerInputState.player.next
             self.currentState = PlayerInputState(player: player,
-                                                 markViewPrototype: player.markViewPrototype,
                                                  gameViewController: self,
                                                  gameboard: gameboard,
                                                  gameboardView: gameboardView)
