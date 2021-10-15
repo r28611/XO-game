@@ -18,7 +18,8 @@ class GameViewController: UIViewController {
     }
     private lazy var referee = Referee(gameboard: self.gameboard)
     private var turn = 0
-
+    
+    @IBOutlet weak var modeControl: UISegmentedControl!
     @IBOutlet var gameboardView: GameboardView!
     @IBOutlet var firstPlayerTurnLabel: UILabel!
     @IBOutlet var secondPlayerTurnLabel: UILabel!
@@ -39,17 +40,40 @@ class GameViewController: UIViewController {
         }
     }
     
+    @IBAction func didModeChanged(_ sender: Any) {
+        restartGame()
+    }
+    
     @IBAction func restartButtonTapped(_ sender: UIButton) {
+        restartGame()
+    }
+    
+    private func restartGame() {
         Log(.restartGame)
+        gameboardView.clear()
+        gameboard.clear()
+        goToFirstState()
+        turn = 0
+        gameboardView.markInvoker
     }
     
     private func goToFirstState() {
         let player = Player.first
-        self.currentState = PlayerInputState(player: player,
-                                             markViewPrototype: player.markViewPrototype,
-                                             gameViewController: self,
-                                             gameboard: gameboard,
-                                             gameboardView: gameboardView)
+        switch modeControl.selectedSegmentIndex {
+        case 0:
+            currentState = PlayerInputState(player: player,
+                                                 gameViewController: self,
+                                                 gameboard: gameboard,
+                                                 gameboardView: gameboardView)
+        case 1:
+            currentState = ComputersTurnState(player: player,
+                                                 markViewPrototype: player.markViewPrototype,
+                                                 gameViewController: self,
+                                                 gameboard: gameboard,
+                                                 gameboardView: gameboardView)
+        default:
+            return
+        }
     }
 
     private func goToNextState() {
@@ -66,6 +90,13 @@ class GameViewController: UIViewController {
         if let playerInputState = currentState as? PlayerInputState {
             let player = playerInputState.player.next
             self.currentState = PlayerInputState(player: player,
+                                                 gameViewController: self,
+                                                 gameboard: gameboard,
+                                                 gameboardView: gameboardView)
+        }
+        if let playerInputState = currentState as? ComputersTurnState {
+            let player = playerInputState.player.next
+            self.currentState = ComputersTurnState(player: player,
                                                  markViewPrototype: player.markViewPrototype,
                                                  gameViewController: self,
                                                  gameboard: gameboard,
